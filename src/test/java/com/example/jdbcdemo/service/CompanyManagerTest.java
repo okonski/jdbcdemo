@@ -4,12 +4,12 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class CarManagerTest {
+public class CompanyManagerTest {
 
-	CarManager carManager = new CarManager();
+	CompanyManager companyManager = new CompanyManager();
 	
 	@Test
 	public void checkConnection(){
-		assertNotNull(carManager.getConnection());
+		assertNotNull(companyManager.getConnection());
 	}
 }

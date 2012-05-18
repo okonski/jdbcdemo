@@ -6,6 +6,7 @@ public class Person {
 	
 	private String name;
 	private int yob;
+	private long company_id;
 	
 	public Person() {
 	}
@@ -15,8 +16,20 @@ public class Person {
 		this.name = name;
 		this.yob = yob;
 	}
+	public Person(String name, int yob, long company_id) {
+		super();
+		this.name = name;
+		this.yob = yob;
+		this.company_id = company_id;
+	}
 	public long getId() {
 		return id;
+	}
+	public long getCompanyId(){
+		return company_id;
+	}
+	public void setCompanyId(long company_id){
+		this.company_id = company_id;  
 	}
 	public void setId(long id) {
 		this.id = id;

@@ -6,6 +6,14 @@ public class Company {
 	
 	private String name;
 
+	public Company(){
+		
+	}
+	public Company(String name) {
+		super();
+		this.name = name;
+	}
+	
 	public Long getId() {
 		return id;
 	}

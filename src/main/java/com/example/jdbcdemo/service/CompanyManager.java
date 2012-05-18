@@ -1,8 +1,11 @@
 package com.example.jdbcdemo.service;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.jdbcdemo.domain.Company;
+import com.example.jdbcdemo.domain.Person;
 
 public class CompanyManager {
 
@@ -15,6 +18,7 @@ public class CompanyManager {
 	private PreparedStatement addCompanyStmt;
 	private PreparedStatement deleteAllCompaniesStmt;
 	private PreparedStatement getAllCompaniesStmt;
+	private PreparedStatement getCompanyWorkersStmt;
 	public CompanyManager(){
 		try{
 			
@@ -40,6 +44,8 @@ public class CompanyManager {
 					.prepareStatement("DELETE FROM Company");
 			getAllCompaniesStmt = connection
 					.prepareStatement("SELECT id, name FROM Company");
+			getCompanyWorkersStmt = connection
+					.prepareStatement("SELECT id, name, yob FROM Person WHERE company_id = ?");
 			
 		} catch (SQLException e){
 			e.printStackTrace();
@@ -49,6 +55,41 @@ public class CompanyManager {
 	// Package scope
 	Connection getConnection(){
 		return connection;
+	}
+	public List<Person> getCompanyWorkers(long company_id) {
+		List<Person> persons = new ArrayList<Person>();
+
+		try {
+			getCompanyWorkersStmt.setLong(1, company_id);
+			ResultSet rs = getCompanyWorkersStmt.executeQuery();
+
+			while (rs.next()) {
+				Person p = new Person();
+				p.setId(rs.getInt("id"));
+				p.setName(rs.getString("name"));
+				p.setYob(rs.getInt("yob"));
+				persons.add(p);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return persons;
+	}
+	public void addWorkers(long company_id, List<Person> workers) throws SQLException {
+		PersonManager personManager = new PersonManager();
+		try{
+			connection.setAutoCommit(false);
+			for (Person worker : workers) {
+				worker.setCompanyId(company_id);
+				personManager.addPerson(worker);
+				connection.commit();
+			}
+		} catch (SQLException e ) {
+			if (connection != null) {
+				connection.rollback();
+			}
+		}
 	}
 	public int addCompany(Company company){
 		int count = 0;
@@ -61,5 +102,30 @@ public class CompanyManager {
 			e.printStackTrace();
 		}
 		return count;		
+	}
+	void clearCompanies() {
+		try {
+			deleteAllCompaniesStmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public List<Company> getAllCompanies() {
+		List<Company> companies = new ArrayList<Company>();
+
+		try {
+			ResultSet rs = getAllCompaniesStmt.executeQuery();
+
+			while (rs.next()) {
+				Company c = new Company();
+				c.setId(rs.getLong("id"));
+				c.setName(rs.getString("name"));
+				companies.add(c);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return companies;
 	}
 }

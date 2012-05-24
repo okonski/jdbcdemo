@@ -17,6 +17,7 @@ public class CompanyManagerTest {
 	PersonManager personManager = new PersonManager();
 	
 	private final static String NAME = "Johnson & Johnson";
+	private final static String NAME_2 = "Orange";
 	@Test
 	public void checkConnection(){
 		assertNotNull(companyManager.getConnection());
@@ -35,6 +36,25 @@ public class CompanyManagerTest {
 		
 		assertEquals(NAME, companyRetrieved.getName());
 		
+	}
+	
+	@Test
+	public void checkUpdates(){
+		Company company = new Company(NAME);
+		
+		companyManager.clearCompanies();
+		assertEquals(1,companyManager.addCompany(company));
+		
+
+		Company companyRetrieved = companyManager.getCompanyByName(NAME);		
+		assertEquals(NAME, companyRetrieved.getName());	
+		
+		companyRetrieved.setName(NAME_2);		
+		companyManager.updateCompany(companyRetrieved);
+		
+		companyRetrieved = companyManager.getCompanyByName(NAME_2);		
+		assertNotNull(companyRetrieved);
+
 	}
 	@Test
 	public void checkAddMultipleWorkers() throws SQLException{
